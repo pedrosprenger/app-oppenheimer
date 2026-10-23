@@ -1,0 +1,1 @@
+Para testar: abra https://snack.expo.dev, apague o conteúdo do App.js, cole o código do meu App.js e clique em “Add dependency” nos avisos que aparecerem. O app roda no painel Preview (aba Web) ou no celular com o Expo Go.
