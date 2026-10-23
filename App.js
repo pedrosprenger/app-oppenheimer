@@ -13,7 +13,6 @@ import {
   SafeAreaView,
 } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
-import Slider from '@react-native-community/slider';
 
 // ---------------------------------------------------------------
 // DADOS (tema: filme Oppenheimer) - troque as URLs por fotos reais se quiser
@@ -111,6 +110,39 @@ const atores = [
     ],
   },
 ];
+
+// ---------------------------------------------------------------
+// SLIDER feito só com React Native (não depende de biblioteca nativa)
+// ---------------------------------------------------------------
+function Slider({ minimumValue = 0, maximumValue = 10, step = 1, value, onValueChange }) {
+  const [largura, setLargura] = useState(0);
+
+  const atualizar = (x) => {
+    if (!largura) return;
+    const p = Math.min(Math.max(x / largura, 0), 1);
+    let v = minimumValue + p * (maximumValue - minimumValue);
+    v = Math.round(v / step) * step;
+    v = Math.min(maximumValue, Math.max(minimumValue, v));
+    onValueChange(v);
+  };
+
+  const pos = ((value - minimumValue) / (maximumValue - minimumValue)) * largura;
+
+  return (
+    <View
+      style={styles.sliderArea}
+      onLayout={(e) => setLargura(e.nativeEvent.layout.width)}
+      onStartShouldSetResponder={() => true}
+      onMoveShouldSetResponder={() => true}
+      onResponderGrant={(e) => atualizar(e.nativeEvent.locationX)}
+      onResponderMove={(e) => atualizar(e.nativeEvent.locationX)}
+    >
+      <View pointerEvents="none" style={styles.sliderTrilho} />
+      <View pointerEvents="none" style={[styles.sliderPreenchido, { width: pos }]} />
+      <View pointerEvents="none" style={[styles.sliderBolinha, { left: pos - 12 }]} />
+    </View>
+  );
+}
 
 // ---------------------------------------------------------------
 // PARTE 1 - Tela de detalhes do filme + lista de atores
@@ -418,6 +450,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
   },
+  sliderArea: { height: 40, justifyContent: 'center' },
+  sliderTrilho: { height: 4, borderRadius: 2, backgroundColor: '#ccc' },
+  sliderPreenchido: { position: 'absolute', height: 4, borderRadius: 2, backgroundColor: '#2962ff' },
+  sliderBolinha: { position: 'absolute', width: 24, height: 24, borderRadius: 12, backgroundColor: '#2962ff', top: 8 },
   tabs: {
     flexDirection: 'row',
     borderTopWidth: 1,
